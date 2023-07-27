@@ -1,0 +1,30 @@
+
+
+NOTES :
+1) Migrate table password_resets
+   > php artisan migrate --path=/database/migrations/2014_10_12_100000_create_password_resets_table.php
+
+2) Setup config email sender di file .env
+   # Bisa lihat di contoh-config-mail.png
+   # Config MAIL_PASSWORD nya generate di akun gmail
+     Tutorial : https://www.rumahweb.com/journal/cara-mengaktifkan-application-password-gmail/
+
+3) Import & Copy file (struktur bisa dilihat dibawah ini)
+
+FILE BARU: 
+  app/Http/Controllers/ForgotPasswordController.php
+  app/Http/Controllers/MailController.php
+  app/Http/Controllers/ResetPasswordController.php
+  app/Mail/ForgotPasswordMail.php
+  app/Models/PasswordReset.php  
+  resources/views/auth/forgotPassword.blade.php
+  resources/views/auth/updatePassword.blade.php
+  resources/views/emails/forgotPasswordMail.blade.php
+
+EDITED FILE :
+  config/app.php
+  resources/views/auth/login.blade.php
+  resources/views/layouts/auth.blade.php
+  routes/web.php
+
+
