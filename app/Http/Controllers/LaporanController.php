@@ -41,31 +41,41 @@ class LaporanController extends Controller
             $total_pengeluaran = Pengeluaran::where('created_at', 'LIKE', "%$tanggal%")->sum('nominal');
             $total_gaji = Gaji::where('created_at', 'LIKE', "%$tanggal%")->sum('total');
 
+            $validasi = Penjualan::where('created_at', 'LIKE', "%$tanggal%")->where('flag_validasi', 1)->first();
+            $tgl_validasi = (isset($validasi)) ? tanggal_indonesia($validasi->tgl_validasi, false) : '';
+            $flag_validasi = (isset($validasi)) ? '1' : '0';
+
             $pendapatan = $total_penjualan - $total_pembelian - $total_pengeluaran - $total_gaji;
             $total_pendapatan += $pendapatan;
 
             $row = array();
             $row['DT_RowIndex'] = $no++;
-            $row['tanggal'] = tanggal_indonesia($tanggal, false);
+            $row['tgl_format'] = tanggal_indonesia($tanggal, false);
             $row['total_barang'] = $total_barang;
             $row['penjualan'] = format_uang($total_penjualan);
             $row['pembelian'] = format_uang($total_pembelian);
             $row['pengeluaran'] = format_uang($total_pengeluaran);
             $row['gaji'] = format_uang($total_gaji);
             $row['pendapatan'] = format_uang($pendapatan);
+            $row['tanggal'] = $tanggal;
+            $row['validasi'] = $flag_validasi;
+            $row['tanggal_validasi'] = $tgl_validasi;
 
             $data[] = $row;
         }
 
         $data[] = [
             'DT_RowIndex' => '',
-            'tanggal' => '',
             'total_barang'=> '',
+            'tgl_format' => '',
             'penjualan' => '',
             'pembelian' => 'Total Terjual All',
-            'gaji' => 'Total Pendapatan',
-            'pengeluaran' => format_uang($total_terjual_barang),
+            'pengeluaran' => format_uang($total_pengeluaran),
             'pendapatan' => format_uang($total_pendapatan),
+            'gaji' => 'Total Pendapatan',
+            'tanggal' => '',
+            'validasi' => '',
+            'tanggal_validasi' => '',
         ];
 
         return $data;
@@ -85,7 +95,25 @@ class LaporanController extends Controller
         $data = $this->getData($awal, $akhir);
         $pdf  = PDF::loadView('laporan.pdf', compact('awal', 'akhir', 'data'));
         $pdf->setPaper('a4', 'potrait');
-        
+
         return $pdf->stream('Laporan-pendapatan-'. date('Y-m-d-his') .'.pdf');
+    }
+
+    public function validasi(Request $request)
+    {
+        $list_tgl = explode(',', json_decode($request->validasi));
+        $success = 0;
+
+        foreach ($list_tgl as $tgl) {
+            $data = Penjualan::whereRaw("DATE(created_at) LIKE ?", [$tgl])->update([
+                'flag_validasi' => 1,
+                'tgl_validasi' => now(),
+                'user_validasi' => auth()->user()->name,
+            ]);
+            $success++;
+        }
+
+        if(!$data && $success == 0) return false;
+        return $success;
     }
 }

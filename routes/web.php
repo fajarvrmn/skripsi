@@ -18,7 +18,7 @@ use App\Http\Controllers\{
     GajiController,
     PortletController,
     ForgotPasswordController,
-    ResetPasswordController,  
+    ResetPasswordController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -48,7 +48,7 @@ Route::post('/reset-password', [ResetPasswordController::class, 'updatePassword'
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     Route::group(['middleware' => 'level:1'], function () {
         Route::get('/kategori/data', [KategoriController::class, 'data'])->name('kategori.data');
         Route::resource('/kategori', KategoriController::class);
@@ -89,7 +89,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('/pembelian_detail', PembelianDetailController::class)
             ->except('create', 'show', 'edit');
 
-        
+
 
         Route::get('/penjualan/data', [PenjualanController::class, 'data'])->name('penjualan.data');
         Route::get('/penjualan', [PenjualanController::class, 'index'])->name('penjualan.index');
@@ -114,7 +114,7 @@ Route::group(['middleware' => 'auth'], function () {
             ->except('create', 'show', 'edit');
         Route::get('/listpo/data', [ListpoController::class, 'data'])->name('listpo.data');
         Route::resource('/listpo', ListpoController::class);
-        
+
         Route::get('/gaji/data', [GajiController::class, 'data'])->name('gaji.data');
         Route::resource('/gaji', GajiController::class);
         Route::post('gaji/cetak', [GajiController::class, 'cetak'])->name('gaji.cetak');
@@ -126,6 +126,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/laporan/data/{awal}/{akhir}', [LaporanController::class, 'data'])->name('laporan.data');
         Route::get('/laporan/pdf/{awal}/{akhir}', [LaporanController::class, 'exportPDF'])->name('laporan.export_pdf');
+        Route::post('/laporan/validasi', [LaporanController::class, 'validasi'])->name('laporan.validasi');
 
         Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
         Route::resource('/user', UserController::class);
@@ -134,7 +135,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/setting/first', [SettingController::class, 'show'])->name('setting.show');
         Route::post('/setting', [SettingController::class, 'update'])->name('setting.update');
     });
- 
+
     Route::group(['middleware' => 'level:1,2'], function () {
         Route::get('/profil', [UserController::class, 'profil'])->name('user.profil');
         Route::post('/profil', [UserController::class, 'updateProfil'])->name('user.update_profil');
