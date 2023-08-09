@@ -29,7 +29,7 @@
                         <button type="button" class="btn btn-primary" id="filter-btn">Filter</button>
                     </div>
                 </div>
-                @endif   
+                @endif
             </div>
             <div class="box-body table-responsive">
                 <table class="table table-stiped table-bordered">
@@ -68,7 +68,7 @@
             serverSide: true,
             autoWidth: false,
             ajax: {
-                url: '{{ route('listpo.data') }}',
+                url: '{{ route('listpo.data', ['sts' => $status]) }}',
                 data: function (d) {
                     d.assigne = $('#assigne').val();
                 }
@@ -119,7 +119,7 @@
     function editForm(url) {
         $('#modal-form').modal('show');
         $('#modal-form .modal-title').text('Edit PO');
-        
+
         $('#modal-form form').attr('action', url);
         $('#modal-form [name=_method]').val('put');
         $('#modal-form #kode_po').focus();
@@ -130,18 +130,18 @@
                 let assigne = response.assigne;
                 let status = response.status;
                 let user_input = response.user_input;
-                let start_date = ''; 
+                let start_date = '';
                 let end_date = '';
                 let bonus = response.bonus;
-                
-                if((list.start_date != null && list.end_date != null)){ 
+
+                if((list.start_date != null && list.end_date != null)){
                     start_date   = list.start_date.substr(0,10);
                     end_date     = list.end_date.substr(0,10);
                 }
 
                 for (const key in assigne) {
                     if(!assigne_opt) {
-                        let selected = key == list.assigne ? 'selected' : '';  
+                        let selected = key == list.assigne ? 'selected' : '';
                         const name = assigne[key];
                         $('#modal-form #assigne option:last-child').after('<option value=' + key + ' ' + selected + '>' + name + '</option');
                     }
@@ -156,10 +156,10 @@
 
                 assigne_opt = true;
                 status_opt = true;
-                
+
                 $('#modal-form #kode_po').val(list.kode_po);
                 $('#modal-form #id_user').val(response.user_input);
-                $('#modal-form #start_date').val(start_date);     
+                $('#modal-form #start_date').val(start_date);
                 $('#modal-form #end_date').val(end_date);
                 $('#modal-form #bonus').val(bonus);
             })

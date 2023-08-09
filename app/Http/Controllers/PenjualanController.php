@@ -11,14 +11,23 @@ use PDF;
 
 class PenjualanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('penjualan.index');
+        $status = (isset($request->sts) && $request->sts != '' ? $request->sts : '');
+
+        return view('penjualan.index', compact('status'));
     }
 
-    public function data()
+    public function data(Request $request)
     {
-        $penjualan = Penjualan::with('member')->orderBy('id_penjualan', 'desc')->get();
+        $status = (isset($request->sts) && $request->sts != '' ? $request->sts : '');
+
+        if($status != '' && $status != 'ALL'){
+            $penjualan = Penjualan::where('status', '!=', '3')->with('member')->orderBy('id_penjualan', 'desc')->get();
+        } else {
+            $penjualan = Penjualan::with('member')->orderBy('id_penjualan', 'desc')->get();
+        }
+
 
         return datatables()
             ->of($penjualan)
@@ -186,7 +195,7 @@ class PenjualanController extends Controller
         $detail = PenjualanDetail::with('produk')
             ->where('id_penjualan', session('id_penjualan'))
             ->get();
-        
+
         return view('penjualan.nota_kecil', compact('setting', 'penjualan', 'detail'));
     }
 

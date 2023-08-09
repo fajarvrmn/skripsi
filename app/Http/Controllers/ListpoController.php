@@ -19,11 +19,13 @@ class ListpoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $status = (isset($request->sts) && $request->sts != '' ? $request->sts : '');
+
         $listpo = Listpo::all()->pluck('nama', 'id_statuses');
         $pegawai = User::where('level', '!=', '1')->get();
-        return view('list_po.index', compact('listpo', 'pegawai'));
+        return view('list_po.index', compact('listpo', 'pegawai', 'status'));
     }
 
     public function data(Request $request)
@@ -32,21 +34,28 @@ class ListpoController extends Controller
         // $getAssigne = Listpo::select(DB::Raw('users.name as pegawai'))
         // ->join('users','users.id', '=', 'list_po.assigne');
 
+        $status = (isset($request->sts) && $request->sts != '' ? $request->sts : '');
+
         $listpo = Listpo::select(DB::Raw('list_po.id as id, penjualan.created_at as tgl_order, penjualan.id_penjualan as no_pesanan, list_po.kode_po as kode_po, start_date as mulai, end_date as selesai,
         assigne as penugasan, status.nama as status, users.name as nama_user, (SELECT users.name FROM users WHERE users.id = list_po.assigne) AS pegawai'))
         ->join('status', 'status.id', '=', 'list_po.id_statuses')
         ->join('penjualan', 'penjualan.id_penjualan', '=', 'list_po.id_penjualan')
         ->join('users', 'users.id', '=', 'list_po.id_user')->orderBy('list_po.created_at','desc');
-        
+
         if (Auth::user()->level == 1) {
             if ($request->assigne != null) {
                 $listpo = $listpo->where('list_po.assigne', '=', $request->assigne);
             } else {
             }
+
+            if($status != '' && $status != 'ALL') {
+                $listpo->where('list_po.id_statuses', '=', $status);
+            }
+
         } else {
             $listpo = $listpo->where('list_po.assigne', '=', auth()->user()->id);
         }
-       
+
         return datatables()
             ->of($listpo->get())
             ->addIndexColumn()
@@ -88,7 +97,7 @@ class ListpoController extends Controller
 
         $listpo->save();
 
-        // $query_update_status = 
+        // $query_update_status =
 
         $penjualan = Penjualan::find($id_penjualan);
         $penjualan->status = 3;
@@ -133,7 +142,7 @@ class ListpoController extends Controller
     public function edit($id)
     {
 
-       
+
 
 
     }
