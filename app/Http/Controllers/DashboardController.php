@@ -20,7 +20,7 @@ class DashboardController extends Controller
         $produk = Produk::count();
         $supplier = Supplier::count();
         $member = Member::count();
-        
+
         //per status list po
         $listpo = Listpo::count(); //total all
         $listpo_1 = Listpo::where('id_statuses','=','1')->count(); //pengerjaan
@@ -29,10 +29,10 @@ class DashboardController extends Controller
         $listpo_4 = Listpo::where('id_statuses','=','4')->count(); //grafir
         $listpo_5 = Listpo::where('id_statuses','=','5')->count(); //revisi
         $listpo_6 = Listpo::where('id_statuses','=','6')->count(); //selesai
-        
+
         // $penjualan2 = Penjualan::count()->WHERE('status','=','1');
-        $penjualan2 = Penjualan::where('status','=','1')->count();
-        
+        $penjualan2 = Penjualan::where('status','!=','3')->count();
+
         $tanggal_awal = date('Y-m-01');
         $tanggal_akhir = date('Y-m-d');
 
@@ -61,8 +61,8 @@ class DashboardController extends Controller
         }
     }
 
-    
-    
-    
-    
+
+
+
+
 }

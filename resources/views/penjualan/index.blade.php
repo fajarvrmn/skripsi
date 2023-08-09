@@ -53,12 +53,12 @@ Daftar Pesanan Tunggu
             serverSide: true,
             autoWidth: false,
             ajax: {
-                url: '{{ route('penjualan.data') }}',
+                url: '{{ route('penjualan.data', ['sts' => $status]) }}',
             },
             columns: [
                 {data: 'DT_RowIndex', searchable: false, sortable: false},
                 {data: 'tanggal'},
-                {data: 'id_penjualan'}, 
+                {data: 'id_penjualan'},
                 {data: 'nama_catalog'},
                 {data: 'keterangan'},
                 {data: 'nama_pemesan'},
@@ -75,9 +75,9 @@ Daftar Pesanan Tunggu
             ],
 
             createdRow: function(row, data, index) {
- 
 
- 
+
+
         if (data.status == '3') {
           $('td', row).css('background-color', 'Yellow');  //Original Date
         }
